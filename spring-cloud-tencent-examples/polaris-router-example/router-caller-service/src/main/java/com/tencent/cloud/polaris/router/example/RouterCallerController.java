@@ -18,8 +18,13 @@
 
 package com.tencent.cloud.polaris.router.example;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,11 +50,11 @@ public class RouterCallerController {
 	 * @return info
 	 */
 	@GetMapping("/feign")
-	public String feign(@RequestParam String name) {
+	public String feign(@RequestParam String name, @RequestHeader Map<String, String> headermap) {
 		User user = new User();
 		user.setName(name);
 		user.setAge(18);
-		return routerCalleeService.info(name, user);
+		return routerCalleeService.info(name, user, headermap);
 	}
 
 	/**
@@ -57,12 +62,17 @@ public class RouterCallerController {
 	 * @return information of callee
 	 */
 	@GetMapping("/rest")
-	public String rest(@RequestParam String name) {
+	public String rest(@RequestParam String name, @RequestHeader Map<String, String> headermap) {
 		User user = new User();
 		user.setName(name);
 		user.setAge(18);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAll(headermap);
+		HttpEntity<User> requestEntity = new HttpEntity<>(user, headers);
+
 		return restTemplate.postForObject(
-				"http://RouterCalleeService/router/service/callee/info?name={name}", user, String.class, name);
+				"http://RouterCalleeService/router/service/callee/info?name={name}", requestEntity, String.class, name);
 	}
 
 	/**

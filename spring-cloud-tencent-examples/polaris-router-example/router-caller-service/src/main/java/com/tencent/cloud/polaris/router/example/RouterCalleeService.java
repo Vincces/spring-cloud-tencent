@@ -18,9 +18,12 @@
 
 package com.tencent.cloud.polaris.router.example;
 
+import java.util.Map;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -32,5 +35,5 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface RouterCalleeService {
 
 	@PostMapping("/router/service/callee/info")
-	String info(@RequestParam("name") String name, @RequestBody User user);
+	String info(@RequestParam("name") String name, @RequestBody User user, @RequestHeader Map<String, String> headermap);
 }
